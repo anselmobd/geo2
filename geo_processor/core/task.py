@@ -1,7 +1,7 @@
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any
 
 
 _FLAGS = set()
@@ -40,7 +40,15 @@ class BaseTask(ABC):
             return True
         return all(self.input_ready(key, value) for key, value in self.config.inputs.items())
 
-    @abstractmethod
     def process(self) -> bool:
+        result = self._process()
+        if result:
+            flag = self.config.outputs.get('flag')
+            if flag:
+                _FLAGS.add(flag)   
+        return result
+
+    @abstractmethod
+    def _process(self) -> bool:
         """Executa o processamento principal"""
         pass

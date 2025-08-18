@@ -1,7 +1,8 @@
-from core.task import BaseTask
+from core.task import BaseTask, _FLAGS
 
 
 class PrinterTask(BaseTask):
 
-    def process(self):
+    def _process(self):
         print(self.config.parameters['text'])
+        return True
