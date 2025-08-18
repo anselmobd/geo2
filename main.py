@@ -1,4 +1,5 @@
 import argparse
+import importlib
 import sys
 import yaml
 from pprint import pprint
@@ -43,13 +44,18 @@ class Main:
         pprint(self.config)
 
     def run_single_task(self, task_id: str):
-        if self.task_exists(task_id):
-            print(f"Running geo2 task: {task_id}")
-        else:
+        task = self.get_task(task_id)
+        if not task:
             print(f"Task {task_id} not found")
 
-    def task_exists(self, task_id: str):
-        return any(task['id'] == task_id for task in self.config['tasks'])
+        module_name = f"geo_processor.tasks.{task['type']}"
+        module = importlib.import_module(module_name)
+        
+    def get_task(self, task_id: str):
+        for task in self.config['tasks']:
+            if task['id'] == task_id:
+                return task
+        return None
 
     def main(self):
         if self.args.print_config:
