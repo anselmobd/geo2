@@ -112,7 +112,7 @@ class Main:
                 return task
         return None
 
-    def orquestrador(self, grafo, timeout=10):
+    def orquestrador(self, grafo, timeout=5):
         tarefas_executadas = set()
         total_sleep = 0
         while len(tarefas_executadas) < len(grafo.nodes) and total_sleep < timeout:
@@ -122,7 +122,7 @@ class Main:
                 if all(pred in tarefas_executadas for pred in predecessores):
                     if tarefa.is_ready() and node not in tarefas_executadas:
                         total_sleep = 0
-                        thread = threading.Thread(target=tarefa.run)
+                        thread = threading.Thread(target=tarefa.process)
                         thread.start()
                         tarefas_executadas.add(node)
             time.sleep(1)
