@@ -31,7 +31,7 @@ class BaseTask(ABC):
     def is_ready(self):
         if not self.config.inputs:
             return True
-        return all(self.input_ready(input) for input in self.config.inputs.items())
+        return all(self.input_ready(key, value) for key, value in self.config.inputs.items())
 
     @abstractmethod
     def process(self) -> bool:
