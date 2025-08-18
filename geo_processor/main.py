@@ -91,7 +91,6 @@ class Main:
                         self.grafo.add_edge(prox_task.config.id, task.config.id)
 
     def print_config(self):
-        pprint(self.config)
         for node in self.grafo.nodes:
             pprint(self.grafo.nodes[node]['task'].config)
 
