@@ -88,12 +88,12 @@ class Main:
 
     def grafo_config(self):
         self.grafo = nx.DiGraph()
-        for task in self.config['tasks']:
-            self.grafo.add_node(task['id'], task=task)
-            for input in task.get('inputs', {}).items():
-                for prox_task in self.config['tasks']:
-                    if input in prox_task.get('outputs', {}).items():
-                        self.grafo.add_edge(prox_task['id'], task['id'])
+        for task in self.tasks:
+            self.grafo.add_node(task.config.id, task=task)
+            for input in task.config.inputs.items():
+                for prox_task in self.tasks:
+                    if input in prox_task.config.outputs.items():
+                        self.grafo.add_edge(prox_task.config.id, task.config.id)
 
     def print_config(self):
         pprint(self.config)
