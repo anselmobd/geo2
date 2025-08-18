@@ -97,6 +97,8 @@ class Main:
 
     def print_config(self):
         pprint(self.config)
+        for node in self.grafo.nodes:
+            pprint(self.grafo.nodes[node]['task'].config)
 
     def run_single_task(self, task_id: str):
         task = self.get_task(task_id)
