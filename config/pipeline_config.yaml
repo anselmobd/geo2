@@ -1,0 +1,5 @@
+tasks:
+  - id: "hello-world"
+    type: "printer"
+    parameters:
+      text: "Hello, World!"
