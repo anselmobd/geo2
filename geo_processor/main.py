@@ -54,6 +54,15 @@ class Main:
         module_name = f"tasks.{task['type']}"
         module = importlib.import_module(module_name)
         
+        class_name_words = task['type'].split('_') + ['Task']
+        class_name = ''.join(word.capitalize() for word in class_name_words)
+        TaskClass = getattr(module, class_name)
+
+        task = TaskClass(**task['parameters'])
+        success = task.run()
+
+        sys.exit(0 if success else 1)
+
     def get_task(self, task_id: str):
         for task in self.config['tasks']:
             if task['id'] == task_id:
