@@ -1,6 +1,9 @@
 import argparse
 import importlib
+import networkx as nx
 import sys
+import time
+import threading
 import yaml
 from pprint import pprint
 from pathlib import Path
@@ -32,6 +35,8 @@ class Main:
         parser.add_argument('--print-config', action='store_true',
                             help='Imprime configuração do pipeline')
         parser.add_argument('--task-id', help='ID da tarefa (modo task)')
+        parser.add_argument('--orquestrador', action='store_true',
+                            help='Executa o orquestrador (modo orquestrador)')
 
         self.args = parser.parse_args()
 
@@ -102,6 +107,22 @@ class Main:
                 return task
         return None
 
+    def orquestrador(self, grafo, timeout=10):
+        tarefas_executadas = set()
+        total_sleep = 0
+        while len(tarefas_executadas) < len(grafo.nodes) and total_sleep < timeout:
+            for node in grafo.nodes:
+                tarefa = grafo.nodes[node]['task']
+                predecessores = list(grafo.predecessors(node))
+                if all(pred in tarefas_executadas for pred in predecessores):
+                    if tarefa.is_ready() and node not in tarefas_executadas:
+                        total_sleep = 0
+                        thread = threading.Thread(target=tarefa.run)
+                        thread.start()
+                        tarefas_executadas.add(node)
+            time.sleep(1)
+            total_sleep += 1
+
     def main(self):
         if self.args.print_config:
             self.print_config()
@@ -109,6 +130,10 @@ class Main:
 
         if self.args.task_id:
             self.run_single_task(self.args.task_id)
+            return
+        
+        if self.args.orquestrador:
+            self.orquestrador(self.grafo)
 
 
 if __name__ == "__main__":

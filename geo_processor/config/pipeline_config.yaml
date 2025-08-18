@@ -1,5 +1,13 @@
 tasks:
-  - id: "hello-world"
+  - id: "hello"
     type: "printer"
+    outputs:
+      flag: "sai1"
     parameters:
-      text: "Hello, World!"
+      text: "Hello,"
+  - id: "world"
+    type: "printer"
+    inputs:
+      flag: "sai1"
+    parameters:
+      text: "World!"
