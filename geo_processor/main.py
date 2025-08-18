@@ -7,6 +7,7 @@ from pathlib import Path
 
 
 _ERROR_CODE_NO_CONFIG = 1
+_ERROR_CODE_CONFIG_DUPLICATE_ID = 2
 
 
 class Main:
@@ -18,7 +19,7 @@ class Main:
         self._BASE_DIR = sys.path[0]
         self._BASE_PATH = Path(self._BASE_DIR)
         self.arg_parser()
-        self.load_config()
+        self.get_config()
 
     def arg_parser(self):
         """Define argumentos da linha de comando"""
@@ -31,6 +32,10 @@ class Main:
 
         self.args = parser.parse_args()
 
+    def get_config(self):
+        self.load_config()
+        self.validate_config()
+
     def load_config(self):
         """
         Carrega configuração do pipeline para a memória
@@ -42,6 +47,15 @@ class Main:
         except FileNotFoundError:
             print("No config file provided")
             sys.exit(_ERROR_CODE_NO_CONFIG)
+
+    def validate_config(self):
+        ids = set()
+        for task in self.config['tasks']:
+            id = task['id']
+            if id in ids:
+                print(f"Duplicate task id: {id}")
+                sys.exit(_ERROR_CODE_CONFIG_DUPLICATE_ID)
+            ids.add(id)
 
     def print_config(self):
         pprint(self.config)
