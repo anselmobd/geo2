@@ -5,6 +5,8 @@ import yaml
 from pprint import pprint
 from pathlib import Path
 
+from core.task import BaseTask
+
 
 _ERROR_CODE_NO_CONFIG = 1
 _ERROR_CODE_CONFIG_DUPLICATE_ID = 2
@@ -72,8 +74,13 @@ class Main:
         class_name = ''.join(word.capitalize() for word in class_name_words)
         TaskClass = getattr(module, class_name)
 
-        task = TaskClass(**task['parameters'])
-        success = task.run()
+        task : BaseTask = TaskClass(
+            task['id'],
+            task.get('inputs', {}),
+            task.get('outputs', {}),
+            task['parameters'],
+        )
+        success = task.process()
 
         sys.exit(0 if success else 1)
 

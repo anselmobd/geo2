@@ -1,6 +1,7 @@
-class PrinterTask:
-    def __init__(self, text):
-        self.text = text
+from core.task import BaseTask
 
-    def run(self, inputs=None, outputs=None):
-        print(self.text)
+
+class PrinterTask(BaseTask):
+
+    def process(self):
+        print(self.params['text'])
