@@ -1,6 +1,6 @@
 import os
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Dict, Any, Optional
 
 
@@ -11,11 +11,18 @@ _FLAGS = set()
 class TaskConfig:
     id: str
     type: str
-    inputs: Dict[str, str] = field(default_factory=dict)
-    outputs: Dict[str, str] = field(default_factory=dict)
-    parameters: Dict[str, Any] = field(default_factory=dict)
+    inputs: Dict[str, str] = None
+    outputs: Dict[str, str] = None
+    parameters: Dict[str, Any] = None
     # dependencies: List[str] = None  # IDs de tarefas dependentes
     
+    def __post_init__(self):
+        if self.inputs is None:
+            self.inputs = {}
+        if self.outputs is None:
+            self.outputs = {}
+        if self.parameters is None:
+            self.parameters = {}
 
 class BaseTask(ABC):
     def __init__(self, config:TaskConfig):

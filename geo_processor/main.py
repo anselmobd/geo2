@@ -78,9 +78,9 @@ class Main:
             task_config = TaskConfig(
                 id=task['id'],
                 type=task['type'],
-                inputs=task.get('inputs', {}),
-                outputs=task.get('outputs', {}),
-                parameters=task.get('parameters', {}),
+                inputs=task.get('inputs'),
+                outputs=task.get('outputs'),
+                parameters=task.get('parameters'),
             )
             TaskClass : BaseTask = getattr(module, class_name)
             task = TaskClass(task_config)
