@@ -22,7 +22,7 @@ class Main:
         self._BASE_DIR = sys.path[0]
         self._BASE_PATH = Path(self._BASE_DIR)
         self.arg_parser()
-        self.get_config()
+        self.process_config()
 
     def arg_parser(self):
         """Define argumentos da linha de comando"""
@@ -35,9 +35,10 @@ class Main:
 
         self.args = parser.parse_args()
 
-    def get_config(self):
+    def process_config(self):
         self.load_config()
         self.validate_config()
+        self.grafo_config()
 
     def load_config(self):
         """
@@ -59,6 +60,15 @@ class Main:
                 print(f"Duplicate task id: {id}")
                 sys.exit(_ERROR_CODE_CONFIG_DUPLICATE_ID)
             ids.add(id)
+
+    def grafo_config(self):
+        self.grafo = nx.DiGraph()
+        for task in self.config['tasks']:
+            self.grafo.add_node(task['id'], task=task)
+            for input in task.get('inputs', {}).items():
+                for prox_task in self.config['tasks']:
+                    if input in prox_task.get('outputs', {}).items():
+                        self.grafo.add_edge(prox_task['id'], task['id'])
 
     def print_config(self):
         pprint(self.config)
