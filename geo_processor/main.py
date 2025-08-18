@@ -43,7 +43,6 @@ class Main:
 
     def process_config(self):
         self.load_config()
-        self.validate_config()
         self.tasks_config()
         self.grafo_config()
 
@@ -59,18 +58,14 @@ class Main:
             print("No config file provided")
             sys.exit(_ERROR_CODE_NO_CONFIG)
 
-    def validate_config(self):
+    def tasks_config(self):
+        self.tasks = []
         ids = set()
         for task in self.config['tasks']:
-            id = task['id']
-            if id in ids:
+            if task['id'] in ids:
                 print(f"Duplicate task id: {id}")
                 sys.exit(_ERROR_CODE_CONFIG_DUPLICATE_ID)
             ids.add(id)
-
-    def tasks_config(self):
-        self.tasks = []
-        for task in self.config['tasks']:
             module_name = f"tasks.{task['type']}"
             module = importlib.import_module(module_name)
             class_name_words = task['type'].split('_') + ['Task']
