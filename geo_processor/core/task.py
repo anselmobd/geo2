@@ -18,11 +18,8 @@ class TaskConfig:
     
 
 class BaseTask(ABC):
-    def __init__(self, id, inputs, outputs, params):
-        self.id = id
-        self.inputs = inputs
-        self.outputs = outputs
-        self.params = params
+    def __init__(self, config:TaskConfig):
+        self.config = config
 
     def input_ready(self, key, value):
         if key == 'file':
@@ -32,9 +29,9 @@ class BaseTask(ABC):
         return False
 
     def is_ready(self):
-        if not self.inputs:
+        if not self.config.inputs:
             return True
-        return all(self.input_ready(input) for input in self.inputs.items())
+        return all(self.input_ready(input) for input in self.config.inputs.items())
 
     @abstractmethod
     def process(self) -> bool:

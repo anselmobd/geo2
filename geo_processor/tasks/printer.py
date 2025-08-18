@@ -4,4 +4,4 @@ from core.task import BaseTask
 class PrinterTask(BaseTask):
 
     def process(self):
-        print(self.params['text'])
+        print(self.config.parameters['text'])

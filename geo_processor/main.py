@@ -8,12 +8,13 @@ import yaml
 from pprint import pprint
 from pathlib import Path
 
-from core.task import BaseTask
+from core.task import BaseTask, TaskConfig
 
 
 _ERROR_CODE_NO_CONFIG = 1
 _ERROR_CODE_CONFIG_DUPLICATE_ID = 2
 _ERROR_CODE_CONFIG_NO_TASK = 3
+_ERROR_CODE_TASK_ERROR = 4
 
 
 class Main:
@@ -43,6 +44,7 @@ class Main:
     def process_config(self):
         self.load_config()
         self.validate_config()
+        self.tasks_config()
         self.grafo_config()
 
     def load_config(self):
@@ -66,6 +68,24 @@ class Main:
                 sys.exit(_ERROR_CODE_CONFIG_DUPLICATE_ID)
             ids.add(id)
 
+    def tasks_config(self):
+        self.tasks = []
+        for task in self.config['tasks']:
+            module_name = f"tasks.{task['type']}"
+            module = importlib.import_module(module_name)
+            class_name_words = task['type'].split('_') + ['Task']
+            class_name = ''.join(word.capitalize() for word in class_name_words)
+            task_config = TaskConfig(
+                id=task['id'],
+                type=task['type'],
+                inputs=task.get('inputs'),
+                outputs=task.get('outputs'),
+                parameters=task.get('parameters'),
+            )
+            TaskClass : BaseTask = getattr(module, class_name)
+            task = TaskClass(task_config)
+            self.tasks.append(task)
+
     def grafo_config(self):
         self.grafo = nx.DiGraph()
         for task in self.config['tasks']:
@@ -83,27 +103,12 @@ class Main:
         if not task:
             print(f"Task {task_id} not found")
             sys.exit(_ERROR_CODE_CONFIG_NO_TASK)
-
-        module_name = f"tasks.{task['type']}"
-        module = importlib.import_module(module_name)
-        
-        class_name_words = task['type'].split('_') + ['Task']
-        class_name = ''.join(word.capitalize() for word in class_name_words)
-        TaskClass = getattr(module, class_name)
-
-        task : BaseTask = TaskClass(
-            task['id'],
-            task.get('inputs', {}),
-            task.get('outputs', {}),
-            task['parameters'],
-        )
         success = task.process()
-
-        sys.exit(0 if success else 1)
+        sys.exit(0 if success else _ERROR_CODE_TASK_ERROR)
 
     def get_task(self, task_id: str):
-        for task in self.config['tasks']:
-            if task['id'] == task_id:
+        for task in self.tasks:
+            if task.config.id == task_id:
                 return task
         return None
 
