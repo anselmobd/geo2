@@ -10,6 +10,7 @@ from core.task import BaseTask
 
 _ERROR_CODE_NO_CONFIG = 1
 _ERROR_CODE_CONFIG_DUPLICATE_ID = 2
+_ERROR_CODE_CONFIG_NO_TASK = 3
 
 
 class Main:
@@ -66,6 +67,7 @@ class Main:
         task = self.get_task(task_id)
         if not task:
             print(f"Task {task_id} not found")
+            sys.exit(_ERROR_CODE_CONFIG_NO_TASK)
 
         module_name = f"tasks.{task['type']}"
         module = importlib.import_module(module_name)
