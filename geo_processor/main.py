@@ -3,6 +3,7 @@ import importlib
 import sys
 import yaml
 from pprint import pprint
+from pathlib import Path
 
 
 _ERROR_CODE_NO_CONFIG = 1
@@ -14,6 +15,8 @@ class Main:
     """
 
     def __init__(self):
+        self._BASE_DIR = sys.path[0]
+        self._BASE_PATH = Path(self._BASE_DIR)
         self.arg_parser()
         self.load_config()
 
@@ -33,7 +36,7 @@ class Main:
         Carrega configuração do pipeline para a memória
         """
         try:
-            with open(self.args.config, 'r') as f:
+            with open(self._BASE_PATH / self.args.config, 'r') as f:
                 self.config = yaml.safe_load(f)
             print(f"Config file: {self.args.config}")
         except FileNotFoundError:
@@ -48,7 +51,7 @@ class Main:
         if not task:
             print(f"Task {task_id} not found")
 
-        module_name = f"geo_processor.tasks.{task['type']}"
+        module_name = f"tasks.{task['type']}"
         module = importlib.import_module(module_name)
         
     def get_task(self, task_id: str):
