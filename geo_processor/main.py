@@ -121,8 +121,9 @@ class Main:
                         thread = threading.Thread(target=tarefa.process)
                         thread.start()
                         tarefas_executadas.add(node)
-            time.sleep(1)
-            total_sleep += 1
+                    else:
+                        time.sleep(1)
+                        total_sleep += 1
 
     def main(self):
         if self.args.print_config:
