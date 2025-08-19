@@ -1,4 +1,4 @@
-from core.task import BaseTask, _FLAGS
+from core.task import BaseTask
 
 
 class PrinterTask(BaseTask):
