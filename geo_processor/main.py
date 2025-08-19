@@ -31,12 +31,12 @@ class Main:
     def arg_parser(self):
         """Define argumentos da linha de comando"""
         parser = argparse.ArgumentParser(description='Pipeline de Processamento Geoespacial')
-        parser.add_argument('--config', default='config/pipeline_config.yaml',
+        parser.add_argument('-c', '--config', default='config/pipeline_config.yaml',
                         help='Arquivo de configuração do pipeline')
-        parser.add_argument('--print-config', action='store_true',
+        parser.add_argument('-pc', '--print-config', action='store_true',
                             help='Imprime configuração do pipeline')
-        parser.add_argument('--task-id', help='ID da tarefa (modo task)')
-        parser.add_argument('--orquestrador', action='store_true',
+        parser.add_argument('-ti', '--task-id', help='ID da tarefa (modo task)')
+        parser.add_argument('-o', '--orquestrador', action='store_true',
                             help='Executa o orquestrador (modo orquestrador)')
 
         self.args = parser.parse_args()
