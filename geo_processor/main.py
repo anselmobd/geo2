@@ -118,23 +118,42 @@ class Main:
             if task.config.id == task_id:
                 return task
         return None
+    
+    def run_task(self, node):
+        try:
+            tarefa = self.grafo.nodes[node]['task']
+            print(f"Executa {node=}")
+            self.tarefas_executadas.add(node)
+            resultado = tarefa.process()
+            if not resultado:
+                self.tarefas_executadas.delete(node)
+        except Exception as e:
+            print(f"Tarefa {node.id} falhou com erro: {e}")
 
-    def orquestrador(self, grafo, timeout=5):
-        tarefas_executadas = set()
+    def orquestrador(self, timeout=5):
+        self.tarefas_executadas = set()
         total_sleep = 0
-        while len(tarefas_executadas) < len(grafo.nodes) and total_sleep < timeout:
-            for node in grafo.nodes:
-                tarefa = grafo.nodes[node]['task']
-                predecessores = list(grafo.predecessors(node))
-                if all(pred in tarefas_executadas for pred in predecessores):
-                    if tarefa.is_ready() and node not in tarefas_executadas:
-                        total_sleep = 0
-                        thread = threading.Thread(target=tarefa.process)
+        while len(self.tarefas_executadas) < len(self.grafo.nodes) and total_sleep < timeout:
+            print("- while loop")
+            print(f"{total_sleep=}")
+            print(f"{len(self.tarefas_executadas)=}")
+            print(f"{len(self.grafo.nodes)=}")
+            for node in self.grafo.nodes:
+                print("- for loop grafo.nodes")
+                print(f"{total_sleep=}")
+                print(f"{node=}")
+                predecessores = list(self.grafo.predecessors(node))
+                print(f"{predecessores=}")
+                if all(pred in self.tarefas_executadas for pred in predecessores):
+                    print("- se todos os predecessores foram executados")
+                    tarefa = self.grafo.nodes[node]['task']
+                    if tarefa.is_ready() and node not in self.tarefas_executadas:
+                        print("- se tarefa está pronta para execução e não foi executada")
+                        thread = threading.Thread(target=self.run_task, args=(node,))
                         thread.start()
-                        tarefas_executadas.add(node)
-                    else:
-                        time.sleep(1)
-                        total_sleep += 1
+                        total_sleep = 0
+                time.sleep(1)
+                total_sleep += 1
 
     def main(self):
         if self.args.print_config:
@@ -146,7 +165,7 @@ class Main:
             return
         
         if self.args.orquestrador:
-            self.orquestrador(self.grafo)
+            self.orquestrador()
 
 
 if __name__ == "__main__":
