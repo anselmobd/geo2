@@ -33,6 +33,8 @@ class BaseTask(ABC):
             return os.path.exists(value)
         elif key == 'flag':
             return value in _FLAGS 
+        elif key == 'flags':
+            return set(value).issubset(_FLAGS)
         return False
 
     def is_ready(self):
