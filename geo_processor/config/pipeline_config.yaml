@@ -2,12 +2,24 @@ tasks:
   - id: "hello"
     type: "printer"
     outputs:
-      flag: "sai1"
+      flag: "hello ok"
     parameters:
       text: "Hello,"
   - id: "world"
     type: "printer"
     inputs:
-      flag: "sai1"
+      flag: "hello ok"
+    outputs:
+      flag: "world ok"
     parameters:
       text: "World!"
+  - id: "rename"
+    predecessors: ["hello", "world"]
+    type: "re_rename"
+    inputs:
+      file: "*.csv"
+      flags: ["hello ok", "world ok"]
+    outputs:
+      file: \1.ok.csv
+    parameters:
+      match: "^(.*).csv$"
