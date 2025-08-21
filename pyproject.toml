@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "pandas>=2.3.1",
     "networkx>=3.5",
+    "pyyaml>=6.0.2",
     "o2lib @ git+https://github.com/anselmobd/o2lib.git@v0.0.1",
 ]
 
