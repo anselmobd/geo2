@@ -92,7 +92,10 @@ class Main:
 
     def print_config(self):
         for node in self.grafo.nodes:
+            print(f"{node=}")
             pprint(self.grafo.nodes[node]['task'].config)
+        for u, v in self.grafo.edges:
+            print(f"{u} --> {v}")
 
     def run_single_task(self, task_id: str):
         task = self.get_task(task_id)
