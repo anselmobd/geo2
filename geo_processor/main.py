@@ -87,7 +87,15 @@ class Main:
             self.grafo.add_node(task.config.id, task=task)
             for input in task.config.inputs.items():
                 for prox_task in self.tasks:
-                    if input in prox_task.config.outputs.items():
+                    prox_task_outputs = []
+                    for key, output in prox_task.config.outputs.items():
+                        if key == 'flags':
+                            for flag in output:
+                                prox_task_outputs.append(('flag', flag))
+                        else:
+                            prox_task_outputs.append((key, output))
+                    print(f"{prox_task_outputs=}")
+                    if input in prox_task_outputs:
                         self.grafo.add_edge(prox_task.config.id, task.config.id)
 
     def print_config(self):
