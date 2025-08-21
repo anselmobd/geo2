@@ -1,3 +1,6 @@
+# auxiliar
+aux/
+
 # Estudo
 estudo/
 
@@ -5,6 +8,10 @@ estudo/
 __pycache__/
 *.py[codz]
 *$py.class
+
+# PyCharm / VSCode
+.idea/
+.vscode/
 
 # C extensions
 *.so
